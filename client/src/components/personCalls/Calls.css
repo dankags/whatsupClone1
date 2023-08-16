@@ -1,0 +1,67 @@
+.callsContainer{
+    display:flex;
+    align-items: center;
+    margin-bottom: 5px;
+    cursor: pointer;
+    padding: 5px 0;
+}
+.callsContainer:active{
+    background-color:#e0e0e0;
+}
+.imagContainer{
+    flex:0.5;
+    margin:0 10px;
+}
+.callsProfileImg{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+
+}
+.callsDesc{
+    flex:3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+}
+.Callbutton{
+    flex:0.5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    
+}
+.callsName{
+    font-weight: 500;
+    color: var(--textColor);
+}
+.callsInfo{
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--textInputIcons);
+}
+.call{
+    height: 35px;
+    width: 35px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color:var(--callBtnColor);
+    color: var(--callIconColor);
+}
+.callsInfoContainer{
+    display: flex;
+    align-items: center;
+}
+.callinfoIcon{
+    font-size: small;
+    margin-right: 5px;
+}

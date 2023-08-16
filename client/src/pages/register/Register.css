@@ -1,0 +1,165 @@
+.registerContainer{
+    width: 100%;
+    height: 100dvh;
+    /* background-image: linear-gradient(90deg,#f7d5d5,#a9f1df); */
+    background-image: url("/public/assets/darkMode.jpg");
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+.toastWrapper{
+ width: 60%;
+ height: 50px;
+ margin-bottom: 20px;
+ /* background-color: blue; */
+}
+.registerWrapper{
+    background-color:rgba(252, 244, 234, 0.418);
+    width: 70%;
+    height: 80%;
+    display: flex;
+    border-radius: 20px;
+    box-shadow: 2px 5px 5px rgba(0,0,0,0.4);
+}
+.registerWrapperleft{
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 20px;
+    /* padding: 10px; */
+    position: relative;
+    background-color: #f3e9d6;
+    border-radius: 20px 0 0 20px;
+}
+.registerLeftWrapperImg{
+    width: 100%;
+    height: 100%;
+    border-radius: 20px 0 0 20px;
+    object-fit: cover;
+}
+.registerWrapperleft.children{
+ position: absolute;
+ padding: 10px;
+ height: 96.6%;
+ background: transparent;
+ background-image: linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.4));
+}
+.registerWrapperleft.children>p{
+  line-height: 20px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #d5f8e4;
+}
+.registerWrapperleft.children>h4{
+    font-weight: 600;
+    font-size:25px ;
+    width: 80%;
+    color: #f5f4f4;
+}
+.registerWrapperleft.children>h1{
+    font-weight: 700;
+    font-size: 35px;
+    color: #19d194;
+}
+.registerWrapperRight{
+    flex: 5;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background-image: linear-gradient(180deg,#005e3fd7,rgba(0, 0, 0, 0.938));
+    /* background-color: rgb(0, 94, 62); */
+    border-radius: 0 20px 20px 0;
+}
+.registerWrapperRight>p{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+    margin: auto;
+}
+.registerWrapperRight>p>span>svg{
+    height: 40px;
+    width: 40px;
+    margin: 7px 10px 0 0;
+   
+}
+.registerWrapperRight>label{
+    width:83%;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+.registerWrapperRight>h3{
+    margin:0 auto;
+    padding: 5px 0;
+    font-size: 20px;
+    color: rgb(245, 242, 242);
+}
+.registerWrapperRight>input{
+  height: 35px;
+  width: 80%;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  border: none;
+  background-color: whitesmoke;
+}
+.passwordWrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+   
+}
+.passwordWrapper>input[type="password"]{
+    height: 35px;
+    width: 73%;
+    margin-right: 10px;
+    padding: 0 10px;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 10px;
+    border: none;
+}
+.passwordWrapper>input[type="text"]{
+    height: 35px;
+    width: 73%;
+    margin-right: 10px;
+    padding: 0 10px;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 10px;
+    border: none;
+}
+.passwordWrapper>input[type="checkbox"]{
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    accent-color: black;
+}
+.registerBtn{
+    height: 40px;
+    width: 60%;
+    margin: auto;
+    font-weight: 500;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color:rgb(0, 128, 79) ;
+    color: rgb(255, 255, 255);
+}
+.registerBtn:hover{
+    color: white;
+    background-color: rgb(0, 182, 91);
+}
+.passwordWrapper>input[type="password"]:focus,.registerWrapperRight>input:focus{
+    outline: none;
+}

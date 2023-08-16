@@ -1,0 +1,43 @@
+.container{
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    cursor: pointer;
+    padding: 5px 0;
+    background-color: var(--main);
+}
+.container:active{
+    background-color:var(--chatClicked);
+}
+.imagecontainer{
+    height: 44px;
+    width: 44px;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    margin: 0 10px;
+    border-radius: 50%;
+    border: 3px solid;
+}
+.statusContentImg{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  
+}
+.statusInfo{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4px;
+}
+.personName{
+    font-weight: 500;
+    color:var( --textColor);
+}
+.timeUpdated{
+    color:var(--textInputIcons);
+    font-weight: 400;
+    font-size: 15px;
+}

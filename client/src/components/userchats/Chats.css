@@ -1,0 +1,84 @@
+.chatsContainer{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+.actualtext{
+   max-width:480px;
+   color: var(--textColor);
+   padding: 6px;
+   border-radius: 8px;
+   font-weight: 500;
+   font-size: 14px;
+}
+.chatsMain,.chatsWrapper{
+    display: flex;
+}
+.chatsWrapperContent{
+    position: relative;
+    border-radius:0 8px 8px 8px;
+    background-color:var(--friend_chat);
+}
+.chatsWrapperContent::after{
+    content:"";
+    position: absolute;
+    top: 0;
+    left: -5px;
+    margin-left: -5px;
+    border: 6px solid ;
+    border-color:var(--friend_chat) var(--friend_chat) transparent transparent;
+
+
+}
+.profilePic{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 7px;
+}
+.timeSent{
+    font-weight: 400;
+    font-size: 15px;
+    margin-left: 6px;
+    color: var(--seenMessages);
+}
+.bottomchatsWrapper{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    padding: 5px 0;
+}
+
+.chatsContainer.own{
+    align-items: flex-end;
+}
+.chatsContainer.own .chatsWrapperContent{
+    border-radius: 8px 0  8px 8px;
+    background-color: var(--user_chat);
+}
+.chatsContainer.own .chatsWrapperContent::after{
+    left: 100%;
+    border-color: var(--user_chat) transparent transparent transparent;
+}
+
+.chatsContainer.own .chatsWrapper .chatsMain{
+    -ms-flex-order: 2;
+    -webkit-order:2;
+    order: 2;
+}
+.chatsContainer.own .chatsMain .actualtext{
+    -ms-flex-order: 1;
+    -webkit-order:1;
+    order: 1;
+}
+.chatsContainer.own  .bottomchatsWrapper{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+}
+/* .chatsContainer.own  .bottomchatsWrapper .bottomwrapperIcon{
+    display: block;
+} */
+

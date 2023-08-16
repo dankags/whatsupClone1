@@ -1,0 +1,120 @@
+.messageitem{
+    list-style: none;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+    position: relative;
+    background-color:var(--main);
+}
+.messageitem:active{
+    background-color:var(--chatClicked) ;
+}
+.userImg{
+    height: 50px;
+    width: 50px;
+    object-fit:cover;
+    border-radius: 50%;
+    margin:0 10px;
+}
+.imgInfo{
+    position: relative;
+    border: none;
+    flex:1;
+}
+.onlinebadge{
+    height: 15px;
+    width: 15px;
+    border: 2px solid var(--main);
+    border-radius: 50%;
+    background-color: limegreen;
+    position: absolute;
+    top: 0;
+    right: 6px;
+}
+.messagedesc{
+    flex:11;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+    position: relative;
+}
+.messagedescTop{
+    display: flex;
+    align-items: center;
+}
+.messageTimeContainer{
+    flex: 1.5;
+    display: flex;
+    justify-content:flex-end;
+    color: grey;
+}
+.messageNamecontainer{
+    flex: 2.5;
+}
+.messagedescTime{
+    font-size: 12px;
+    font-weight: 300;
+    margin-right: 10px;
+}
+.messagedescName{
+    font-weight: 500;
+    font-size: 18px;
+    color:var(--textColor);
+    text-transform: capitalize;
+}
+.messagedescName::first-letter{
+    /* text-transform: capitalize; */
+}
+.messageDescHr{
+    margin: 0 0 0 0;
+    padding: 0;
+    position: absolute;
+    top: 98%;
+    right:0 ;
+    width: 85%;
+}
+.messagedescbottom{
+    display: flex;
+    align-items: center;
+}
+.mainmessagecontainer{
+    flex: 10;
+    display: flex;
+    justify-content: flex-start;
+}
+.mainMessage{
+   width: 0;
+   flex: 10;
+   display: flex;
+   align-items: center;
+   font-weight: 400;
+   padding: 0 2px;
+   text-overflow:ellipsis;
+   white-space:nowrap;
+   overflow-x: hidden;
+   color: grey;
+}
+.messagenumbers{
+    flex: 2;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+    
+}
+.messagenumbersBadge{
+    background-color: var(--noOfMessages);
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    color: var(--main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    
+}

@@ -1,0 +1,39 @@
+.chatPageLayout{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+.leftPageLayout{
+    flex: 4;
+    position: relative;
+    height: 100%;
+}
+.rightPageLayout{
+    flex: 8;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.topBarLayout{
+    padding: 10px;
+    height: 110px;
+}
+.leftTopLayout{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.leftBottomLayout{
+    margin-top: 10px;
+
+}
+.leftCenterLayout{
+    padding: 10px;
+    /* background-color: red; */
+    position: absolute;
+    width: 95%;
+    height:calc(100vh - 150px) ;
+}
+
+ 

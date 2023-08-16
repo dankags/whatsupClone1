@@ -1,0 +1,183 @@
+.maincontainer{
+    flex: 8;
+    height: 100vh;
+    
+}
+.chatmainContainer{
+    display:flex;
+    flex-direction:column;
+    /* background-image:url("/public/assets/HD-wallpaper-whatsapp-v-background-doodle-pattern-patterns-whatsapp-thumbnail.jpg"); */
+    background-image:url("/public/assets/light_bak_w.jpg");
+    /* background-color: #dad4cc;
+    background-blend-mode:soft-light; */ 
+    /* background-color: var(--chatBackgroungColor); */
+   
+}
+.chatsTopbarContainer{
+    display: flex;
+    align-items: center;
+    height:65px ;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: var(--textColor);
+    background-color: var(--main);
+    border-radius: 0 0 8px 8px;
+}
+
+
+.topbarLeft{
+    flex: 4;
+    display: flex;
+    align-items: center;
+    padding-left:15px ;
+}
+.topbarRight{
+    flex:4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 10px 0 0;
+}
+.topRightIcons{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    
+}
+.chatsCredentials{
+    display: flex;
+    flex-direction: column;
+
+}
+.chatsName{
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--textColor);
+}
+.chatsLastseen{
+    font-weight: 400;
+    color:var(--textInputIcons);
+}
+.chatsProfile{
+    max-width: 45px;
+    max-height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin:0 10px;
+}
+.topRightLine{
+    transform: rotate(0deg);
+    background-color: var(--textInputIcons);
+    height: 27px;
+    border: none;
+    outline: none;
+    width: 2px;
+    border-radius: 3px;
+}
+/* .TopbarIcon{
+    margin:0 -3px 0 10px;
+    cursor: pointer;
+    color: var(--textInputIcons);
+} */
+.RightIcons{
+    cursor: pointer;
+    color:var(--textInputIcons) ;
+}
+.messageContainer{
+    position: -webkit-sticky;
+    position: sticky;
+    border-radius: 10px 0 0 0;
+    top: calc(100vh - 0);
+    height: calc(100vh - 145px);
+    overflow-y: scroll;
+}
+.messageinputContainer{
+    height:calc(100vh - 88vh) ;
+    margin: 0;
+    display: flex;
+    background-color: var(--main);;
+    margin-left: 5px;
+}
+.inputContainer{
+    flex: 7;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    background-color: var(--main);
+    border-radius: 30px;
+    padding: 10px 0;
+    margin:0 20px 0 0;
+}
+.sendbuttonCntainer{
+   flex: 1;
+   display: flex;
+   align-self: center;
+   
+}
+.textarea{
+    height: 35px;
+    width: 80%;
+    font-size: 17px;
+    font-weight: 500;
+    outline: none;
+    background-color: var(--main);
+    color:var(--textColor);
+    border:none ;
+    border-radius: 8px;
+    padding-left: 5px;
+    letter-spacing: 0.5px;
+}
+.textarea:focus{
+    outline: none;
+}
+.shareCameraIcons,.emojisContainer{
+    display: flex;
+    align-items: center;
+    
+}
+.messageinputIcon{
+    cursor: pointer;
+    color: var(--textInputIcons);
+}
+.shareCameraIcons{
+    margin:0 10px;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.emojisContainer{
+    margin:0 15px;
+    display: flex;
+    justify-content: space-between;
+    gap:10px;
+}
+.submit{
+    width: 50px;
+    height:50px;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    background-color:transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.defaultChatPage{
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+.defaultChatPage>span{
+    font-size: 40px;
+    font-weight: 600;
+    color: #8d8d8d;
+    text-align: center;
+}
+@media screen and (max-height:484px) {
+    
+}

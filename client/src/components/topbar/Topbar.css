@@ -1,0 +1,180 @@
+.topbarContainer{
+    height: 110px;
+    background-color: var(--main);
+    border-radius: 0 0 8px 8px;
+    z-index: 999;
+    box-shadow: 0 3px 5px var(--box_shadow);
+    position: relative;
+}
+.containerTop{
+    height:60px;
+    display: flex;
+    align-items: center;
+}
+.topLeft{
+    flex: 6;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.Name{
+    font-size: 28px;
+    color:var(--textColor) ;
+    font-weight: 700;
+    margin-left: 10px;
+}
+.username{
+    color: var(--textColor);
+    width: 90%;
+    font-weight: 700;
+    font-size: 22px;
+    margin-left: 5px;
+    
+}
+.userProfile{
+    height: 42px;
+    width: 42px;
+    border-radius: 50%;
+    margin:0 10px;
+    object-fit: cover;
+}
+
+.topRight{
+    flex: 6;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 5px;
+}
+.RightIconcontainer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 15px;
+}
+.topbarIcon{
+    color:var(--textColor);
+    cursor:pointer;
+}
+.containerBottom{
+    height:50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main);
+    border-radius: 0 0 8px 8px;
+    /* grid-template-columns: 25% 25% 25% 25%;
+    text-align:center;
+    position: relative; */
+    
+}
+.bottomNavigator{
+    position: absolute;
+    top:90%;
+    width: 25%;
+    height: 5px;
+    background-color: white;
+    box-shadow: 0 2px 5px var(--box_shadow);
+
+}
+@keyframes navigation {
+    0%{
+
+    }
+    25%{
+
+    }
+    50%{
+
+    }
+    75%{
+
+    }
+}
+.searchBarDefault{
+    width: 95%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.searchBar{
+    width: 95%;
+    display: flex;
+    align-items: center;
+    border-radius:6px 6px 2px 2px ;
+    outline: none;
+    border-bottom:3px solid #35897e ;
+   box-shadow: 0 -2px 5px var(--box_shadow);   
+   margin-bottom: 10px;
+}
+.searchInput{
+    width: 90%;
+    height: 30px;
+    padding: 0 10px;
+    border: none;
+    border-radius:6px 6px 0 0;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: .5px;
+    margin-right: 10px;
+    outline: none;
+    background-color: var(--main);
+    color:var(--textColor);
+}
+
+.searchBar:hover{
+    outline: none;
+    border-bottom:3px solid #35897e ;
+   box-shadow: 0 -2px 5px var(--box_shadow);
+} 
+.searchIcon{
+    margin-top: 10px;
+    color: var(--textInputIcons);
+    transform: rotate(90deg);
+    cursor: pointer;
+}
+.menu{
+    display: none;
+    width: 100px;
+    height:fit-content;
+    background-color: #fff;
+    position: absolute;
+     z-index: 999; 
+    top: 40%;
+    right: 4%;
+    box-shadow: 0 1px 5px #727171;
+}
+.menuList{
+    list-style: none;
+    font-weight: 500;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background-color: var(--friend_chat);
+}
+.menuListItem{
+    padding: 7px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:var(--textColor);
+}
+.menuListItem:active{
+    background-color: var(--chatClicked);
+    
+}
+
+/* .containerBottomBtns{
+    background-color:transparent;
+    color: white;
+    height: 45px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.containerBottomBtns:active{
+    background-color: #0d6054;
+} */
