@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const multer=require("multer")
+const path=require("path")
 const chatRoute=require("./routers/chat");
 const authRouter=require("./routers/Auth");
 const conversationRouter=require("./routers/conversations");
@@ -16,6 +17,7 @@ mongoose.connect(process.env.MONGO_URL,()=>{
 });
 mongoose.set('strictQuery', false);
 
+app.use("/images",express.static(path.join(__dirname,"public/images")));
 //middleWare
 app.use(express.json());
 app.use(helmet());
@@ -30,13 +32,18 @@ const storage=multer.diskStorage({
         cb(null,"public/images")
     },
     filename:(req,file,cb)=>{
-        cb(null,file.originalname)
+        // cb(null,req.body.name)
+        const name=req.body.name
+        console.log(name);
+        const filename=Date.now()+file.originalname
+        cb(null,req.query.name)
     },
 });
 
 const upload=multer({storage});
 app.post("/api/upload",upload.single("file"),(req,res)=>{
     try {
+   
        return res.status(200).json("file uploaded successfully.");
     } catch (err) {
         console.log(err);  

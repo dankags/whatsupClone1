@@ -1,5 +1,6 @@
 const router=require("express").Router();
 const Conversation = require('../models/conversation');
+const User=require("../models/user")
 
 // create new friends conversation 
 router.post("/",async(req,res)=>{
@@ -26,4 +27,6 @@ router.post("/",async(req,res)=>{
     res.status(500).json(err);
    }
  })
+
+
 module.exports=router;

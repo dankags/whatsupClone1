@@ -10,7 +10,7 @@ export default function Chats ({own,friend,messageObj}) {
   const [friends,setFriends]=useState(null)
   const getChatProfile=(userPic)=>{
      if (userPic) {
-      return `/assets/${userPic}`;
+      return `${process.env.REACT_APP_PUBLIC_FOLDER}${userPic}`;
      }
      return"/assets/noAvatar2.webp";
   }

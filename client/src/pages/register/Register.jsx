@@ -1,22 +1,38 @@
-import React ,{Component, useRef,useState}from 'react';
+import React ,{Component,useRef,useState,useEffect}from 'react';
 import './Register.css'
-import { WhatsApp,VisibilityOffOutlined,VisibilityOutlined } from '@mui/icons-material';
-import axios, { Axios } from "axios"
+import { WhatsApp,VisibilityOffOutlined,VisibilityOutlined} from '@mui/icons-material';
+import axios from "axios"
 import { ToastContainer, toast } from 'react-toastify';
-import { Navigate, redirect } from 'react-router';
+
 
 const Register = () => {
-    const showPassword=()=>{
-        const passwordInput=document.querySelector("#Password");
-        passwordInput.getAttribute("type")==="password"?  passwordInput.setAttribute('type','text'):  passwordInput.setAttribute('type','password');
-    }
+  //  const {setDisplay}=useContext(formStatecontext)
    const userName=useRef();
    const email=useRef();
    const pass=useRef()
    const phoneNumber=useRef()
    const confirmPass=useRef();
    const [showPass,setShowPass]=useState(true)
+ 
+useEffect(()=>{
+  toast.success("Registration Successfully", {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    })
+},[])
+  
 
+
+   const showPassword=()=>{
+    const passwordInput=document.querySelector("#Password");
+    passwordInput.getAttribute("type")==="password"?  passwordInput.setAttribute('type','text'):  passwordInput.setAttribute('type','password');
+}
    const showPasshandler=(e)=>{
     const passwordInput = document.querySelector("#Password");
     showPass?setShowPass(false):setShowPass(true)
@@ -52,15 +68,17 @@ const Register = () => {
         }
         console.log(res);
       }else{
+       
         console.log("password do not match");
       }
     } catch (error) {
       console.log(error);
     }
   }
+  
   return (
     <div className='registerContainer'>
-      <div className='toastWrapper'>
+      {/* <div className='toastWrapper'> */}
       <ToastContainer position="top-center"
              autoClose={5000}
              hideProgressBar={false}
@@ -73,7 +91,7 @@ const Register = () => {
              theme="Dark"
              style={{width:"20px",height:"20px"}}
              />
-             </div>
+             {/* </div> */}
       <div className="registerWrapper">
         <div className="registerWrapperleft">
           <img className='registerLeftWrapperImg' src="/assets/chat-random.jpg" alt="" />
@@ -81,6 +99,8 @@ const Register = () => {
             <h1>WhatsUp</h1>
             <h4> Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vero, enim consequuntur culpa eos assumenda reprehenderit et sint, illum, rem dolores </h4>
             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Non autem laudantium necessitatibus temporibus dolorum aperiam molestias minus impedit quam quidem, magni possimus, similique repudiandae, tempora at ea ex fuga eos?</p>
+          
+         
           </div>
         </div>
         <form className="registerWrapperRight" onSubmit={formhandler}>
@@ -113,6 +133,7 @@ const Register = () => {
             
         </form>
       </div>
+      
     </div>
   )
 }

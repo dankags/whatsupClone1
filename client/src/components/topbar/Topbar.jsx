@@ -64,7 +64,7 @@ export default function Topbar() {
         <div className="topLeft">
           <div className="Imgcontainer">
             <Link to={`/profile/${user._id}`} style={{textDecoration:"none"}}>
-            <img src={currentUser.profilePic?`/assets/${currentUser.profilePic}`:"/assets/noAvatar.jpg"} alt="" className="userProfile" />
+            <img src={currentUser.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${user.profilePic}`:"/assets/noAvatar.jpg"} alt="" className="userProfile" />
             </Link>
           </div>
           <span className="username">Chat</span>

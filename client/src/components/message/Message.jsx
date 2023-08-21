@@ -43,19 +43,21 @@ export default function Message({changedProfile,currentConv,currentUser,conversa
  },[])
 
  useEffect(()=>{
-  setUpdateProfile(changedProfile)
+  changedProfile&&setUpdateProfile(changedProfile)
+  console.log(changedProfile);
   const friendId=conversation.members.find(m=>m!==currentUser._id);
   userFriendId.current.id=friendId;
+  changedProfile&&setuserFriend(prev=>({...prev,profilePic:changedProfile.userImage}))
   // !onlineUsers.some((user)=>user.newUserId===friendId)&&setIsOnline(true);
-  const fetchFriend=async()=>{
-    try {
-      const res= await axios.get("/api/chat/friends/profile/"+friendId);
-      setuserFriend(res.data)
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  updateProfile&&fetchFriend();
+  // const fetchFriend=async()=>{
+  //   try {
+  //     const res= await axios.get("/api/chat/friends/profile/"+friendId);
+  //     setuserFriend(res.data)
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  // updateProfile&&fetchFriend();
  
  },[changedProfile])
 
@@ -122,7 +124,7 @@ useEffect(()=>{
   return (
     <div className="messageitem">
       <div className="imgInfo"> 
-       <img src={userFriend.profilePic?`/assets/${userFriend.profilePic}`:"/assets/noAvatar2.webp"} alt="chats profile" className="userImg" />
+       <img src={userFriend.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${userFriend.profilePic}`:"/assets/noAvatar2.webp"} alt="chats profile" className="userImg" />
        <span className="onlinebadge" style={isOnline?{display:"block"}:{display:"none"}}></span>
       </div>
         <div className="messagedesc">

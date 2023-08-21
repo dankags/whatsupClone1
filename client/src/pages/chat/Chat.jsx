@@ -4,7 +4,7 @@ import './Chat.css'
 import Chats from '../../components/userchats/Chats';
 import { CallOutlined,VideocamOutlined,MoreVert,SendOutlined,EmojiEmotionsOutlined,AttachFileOutlined } from '@mui/icons-material';
 import axios,{AxiosError} from 'axios';
-import React ,{Component, useContext, useEffect,useRef, useState}from 'react';
+import React ,{Component, useContext, useEffect,useMemo,useRef, useState}from 'react';
 import {io} from 'socket.io-client'
 import { Link } from 'react-router-dom';
 import Message from '../../components/message/Message';
@@ -16,7 +16,7 @@ import Topbar from '../../components/topbar/Topbar';
 export default function Chat(user) {
   const socket=useRef(); 
   const {setSocket}=useContext(LanguageContext)
-  const {user:User}=useContext(Context)
+  const {user:User,dispatch}=useContext(Context)
   const [inCommingMessage,setInCommingMessage]=useState(null)
   const [onlineFriends,setOnlineFriends]=useState(null);
   const [currentConversation,setCurrentCoversation]=useState(null)
@@ -30,7 +30,8 @@ export default function Chat(user) {
   const [myOwnWrittenMess,setOwnWrittenMess]=useState(null);
   const [receiver,setReceiverId]=useState(null);
   const [isLoading,setIsLoading]=useState(true)
-  const [openedConv,setOpenedConv]=useState(false);
+  const [recentConv,setRecentConv]=useState(null)
+  const [openedConv,setOpenedConv]=useState(null);
   const [prevConv,setPrevConv]=useState(null);
   const [refetchConv,setRefetchConv]=useState(false)
 
@@ -42,9 +43,18 @@ useEffect(()=>{
    
   // setConversations(fetchFriendsConv(User))
   setIsLoading(false)
-  },3000)
+  },4000)
+  const fetchFriendsConv=async()=>{
+    try {
+      const res= await axios.get("/api/conversations/"+User._id);
+      setConversations(res.data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  fetchFriendsConv(User);
   socket.current=io("ws://localhost:7000");
-  setSocket(socket.current)
+  
   socket.current.on("getMessage",data=>{
     setInCommingMessage({
       senderId:data.senderId,
@@ -54,17 +64,19 @@ useEffect(()=>{
     )
   })
   socket.current.on("getOpenedConv",data=>{
-    setOpenedConv(data.condition)
+    setOpenedConv(data)
   })
   socket.current.on("userChangedProfile",data=>{
+    
      setChangedProfileId(data)
     
   })
 },[])
-
+console.log(openedConv);
 //get online users from socket server
 useEffect(()=>{
   socket?.current.emit("newUser",User._id);
+  socket&&dispatch({type:"INITIALIZE_SOCKET",payload:socket})
   socket?.current.on("getUsers",users=>{
     setOnlineFriends(users);
     // setOnlineFriends(users)
@@ -79,28 +91,28 @@ useEffect(()=>{
 },[currentConversation,onlineFriends])
 
 //fetch conversations
-useEffect(()=>{
-  const fetchFriendsConv=async()=>{
-    try {
-      const res= await axios.get("/api/conversations/"+User._id);
-      setConversations(res.data)
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  fetchFriendsConv(User);
+useMemo(()=>{
+  // const fetchFriendsConv=async()=>{
+  //   try {
+  //     const res= await axios.get("/api/conversations/"+User._id);
+  //     setConversations(res.data)
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  // fetchFriendsConv(User);
 },[User._id])
 
 //fetch messages from a database and notify the convesation users that you opened this conversation
 //thats if the user is in online in order to register that messages are read by using blue tick
 useEffect(()=>{ 
   socket?.current.emit("sendOpenedConv",{
-    senderId:user._id,
+    senderId:User._id,
     receiverId:currentConversation?.members.find(m=>m!==User._id),
     condition:true,
   })
   socket?.current.emit("sendOpenedConv",{
-    senderId:user._id,
+    senderId:User._id,
     receiverId:prevConv?.members.find(m=>m!==User._id),
     condition:false,
   })
@@ -129,26 +141,21 @@ useEffect(()=>{
 // update currecnt opened conversation and updates the grey ticks into blue ticks 
 useEffect(()=>{
   const updateUnReadMess=async()=>{
+    if (currentConversation?.members.includes(openedConv?.senderId)) {
+      console.log(currentConversation.members);
     try {
       const res=await axios.put("/api/message/toReadMessages/"+currentConversation?._id);
+      if(res.status===200){
+        openedConv&&setMessages(messages.map(item=>({...item,isRead:true})))
+      }
+     
     } catch (error) {
       console.log(error);
     }
   }
-  const fetchMessages=async()=>{
-    try {
-       
-      const res=await axios.get("/api/message/"+currentConversation?._id);
-      setMessages(res.data)
-      
-    } catch (error) {
-      console.log(error);
-    }
   }
-  if (openedConv) {
-    updateUnReadMess()
-  fetchMessages()
-  }
+  updateUnReadMess()
+  
 },[openedConv])
 
   //scroll into view or to the last message
@@ -174,12 +181,24 @@ useEffect(()=>{
     fetchFriend(friendId);
   },[currentConversation])
 
+  useEffect(()=>{
+    changedProfileId&&setUserFriend(prev=>({...prev,profilePic:changedProfileId.userImage}))
+  },[changedProfileId])
+
 //update messages or adds incomming message from socket to the conversation message array=>(messages,set message)
 //refresh conversations whenenever there is a new user texting you throughe message from socket
 useEffect(() => {
+  let conv=conversations?.find(item=>item.members.find(m=>m===inCommingMessage?.senderId))
+  if (inCommingMessage) {
+    setRecentConv(conversations.find(item=>item.members.includes(inCommingMessage.senderId)))
+  console.log(recentConv);
+  let filteredArray= conversations.filter(item=>item!==conv)
+  setConversations(filteredArray)
+  setConversations(prev=>[conv,...prev])
+  }
   inCommingMessage&&currentConversation?.members.includes(inCommingMessage.senderId)&&setMessages(prev=>[...prev,inCommingMessage])
   setReceiverId(User._id)
-  conversations?.map((element)=>
+  inCommingMessage&&conversations?.map((element)=>
   element.members.includes(inCommingMessage.senderId)&& setRefetchConv(true)
 )
 const fetchFriendsConv=async()=>{
@@ -204,24 +223,28 @@ const handleSubmit=async(e)=>{
     conversationId:currentConversation._id,
     senderId:User._id,
     messages:senderMessage.current.value,
-    isRead:openedConv
+    isRead:openedConv?.condition
   }
-  setOwnWrittenMess({
+  console.log(User._id);
+  console.log(openedConv?.senderId);
+  currentMessage.messages&&setOwnWrittenMess({
     senderId:User._id,
     messages:senderMessage.current.value,
     createdAt: Date.now(),
   })
   const receiverId=currentConversation.members.find(member=>member!==User._id);
-  setOwnWrittenMess({
+  currentMessage.messages&&setOwnWrittenMess({
     senderId:receiverId,
     messages:senderMessage.current.value,
     createdAt: Date.now(),
   })
+  let conv=conversations.find(item=>item.members.find(m=>m===receiverId))
+ 
   setReceiverId(receiverId);
-  console.log(receiverId)
+  
   //send message to socket Server
   if(onlineFriends.some((member)=>member.newUserId===receiverId)){
-    socket.current.emit("sendMessage",{
+   currentMessage.messages&&socket?.current.emit("sendMessage",{
     senderId:User._id,
     receiverId:receiverId,
     textmessage:senderMessage.current.value
@@ -234,12 +257,19 @@ const handleSubmit=async(e)=>{
   // });
   senderMessage.current.value="";
   //save the message in the dataBase
+  if(currentMessage.messages){
   try {
     const res=await axios.post("/api/message",currentMessage);
     setMessages([...messages,res.data])
+    console.log(res.status);
+    let filteredConv=conversations.filter(item=>item!==conv)
+    if(res.status===201){
+    setConversations(filteredConv)
+    setConversations(prev=>[conv,...prev])
+  }
   } catch (error) {
     console.log(error);
-  }
+  }}
 }
 
 
@@ -258,10 +288,10 @@ const handleSubmit=async(e)=>{
     <div className="chatpagecontainer">
     <div className="chatpagelist">
       <div className="conversationWrapper">
-     {conversations.map((person)=>
+     {conversations?.map((person)=>
        <div onClick={()=>setCurrentCoversation(person)} key={person._id}>
          {/* check this place if there is error */}
-       <Message changedProfile={person.members.includes(changedProfileId)?true:false} currentConv={currentConversation} conversation={person} currentUser={User} onlineUsers={onlineFriends} message={person.members.some(m=>inCommingMessage?.senderId===m)?inCommingMessage:null} ownMessage={myOwnWrittenMess} receiverId={receiver}  />
+       <Message changedProfile={person.members.includes(changedProfileId?.userChangerId)?changedProfileId:null} currentConv={currentConversation} conversation={person} currentUser={User} onlineUsers={onlineFriends} message={person.members.some(m=>inCommingMessage?.senderId===m)?inCommingMessage:null} ownMessage={myOwnWrittenMess} receiverId={receiver}  />
        </div>
        )
        }
@@ -288,7 +318,7 @@ const handleSubmit=async(e)=>{
                {/* <ArrowBack className="TopbarIcon"/> */}
                <div>
                <Link to={`/profile/${userFriend?._id}`} style={{textDecoration:"none"}}>
-                <img src={userFriend?.profilePic?`/assets/${userFriend.profilePic}`:"/assets/noAvatar2.webp"} alt="" className="chatsProfile" height="40px" width="40px"/>
+                <img src={userFriend?.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${userFriend.profilePic}`:"/assets/noAvatar2.webp"} alt="" className="chatsProfile" height="40px" width="40px"/>
                 </Link>
                 </div>
                 <div className="chatsCredentials">

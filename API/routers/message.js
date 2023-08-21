@@ -57,4 +57,16 @@ router.put("/toReadMessages/:convId",async(req,res)=>{
         res.status(500).json(err);
     }
 })
+//update user
+router.put("/toReadMessages/:Id",async(req,res)=>{
+    try {
+        const allMessages=await User.find({conversationId:req.params.Id});
+        allMessages.map(async(message)=>
+         await message.updateOne({isRead:true})
+        )
+        res.status(200).json("updated Successfully");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 module.exports=router;

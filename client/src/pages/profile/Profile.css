@@ -5,6 +5,8 @@
     padding: 0;
     margin: 0;
     background-color: var(--main);
+    position: relative;
+    color:var(--textColor);
 }
 .profileLeftWrapper{
     flex:8;
@@ -30,10 +32,10 @@
     left: 5%;
     width: 10em;
     height: 10em;
-    border: 4px solid var(--main);
+    border: 5px solid var(--main);
     border-radius: 50%;
     /* position: relative; */
-    z-index: 999;
+    /* z-index: 999; */
 }
 .profileImgHolder>img{
     width: 10em;
@@ -192,7 +194,7 @@
     cursor: pointer;
 }
 .changeProfileBtn>svg{
-    color: #fff;
+    /* color: #fff; */
 }
 .backImageBtn{
     display: flex;

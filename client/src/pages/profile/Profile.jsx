@@ -7,47 +7,68 @@ import { Friend } from '../../components/friends/Friend'
 import { NewUser } from '../../components/newUser/NewUser'
 import axios from 'axios'
 import { Context, LanguageContext } from '../../contextAPI/context'
+import { UserImages } from '../../components/changeUserImages/UserImages'
 
 const Profile = () => {
     const [isName,setIsName]=useState(false)
     const {socket}=useContext(LanguageContext)
     const [isAbout,setIsAbout]=useState(false)
     const [userFriends,setUserFriends]=useState(null)
-    const [users,setUsers]=useState(null);
+    const [userFriend,setUserFriend]=useState(null)
+    const [allUsers,setAllUsers]=useState(null);
     const [usersId,setUsersId]=useState(null);
-    const {user}=useContext(Context)
+    const [showForm,setShowForm]=useState(false)
+    const {user,dispatch}=useContext(Context)
     const [finishedFetching,setFinishedFetching]=useState(true)
+    const [imageSettings,setImageSettings]=useState(false)
     const About=useRef();
     const Name=useRef();
     const params=useParams().id
     // console.log(params);
-    console.log(socket.current);
+    // console.log(socket.current);
     useEffect(()=>{
-      setTimeout(()=>{
-        console.log("hello");
-        setFinishedFetching(!finishedFetching);
-
-      },3000)
+      
+    
+      params===user._id&&setUserFriends(user.friends)
       const fetchUsers=async()=>{
         try {
           const res=await axios.get("/api/chat/allUsers");
-          setUsers(res.data);
+          // setAllUsers(res.data)
+          let data=res.data.filter((u)=>u._id!==user?._id)
+          let useFriends=user?.friends
+          useFriends.forEach(item=>data=data.filter(i=>i._id!==item))
+           setAllUsers(data);
         } catch (error) {
           console.log(error);
         }
       }
       fetchUsers();
-      params===user._id&&setUserFriends(user.friends)
-    },[])
-   
+    
+      if(params===user?._id){
+        setUserFriends(user?.friends)
 
+      }
+      setTimeout(()=>{
+        
+        setFinishedFetching(!finishedFetching);
+        console.log(allUsers);
+      },3000)
+    },[])
+    
+   
+   useEffect(()=>{
+   
+    allUsers&&user?.friends.map((element)=>
+    setAllUsers(allUsers.filter((u)=>u._id!==element))
+    )
+   },[userFriend])
   //fetch user or friend profile according to parameter provided
    useEffect(()=>{
     const fetchFriend=async()=>{
       try {
         const res= await axios.get(`/api/chat/friends/profile/${params}`);
-          setUserFriends(res.data)
-
+          setUserFriend(res.data)
+          setUserFriends(res.data.friends)
       } catch (error) {
         console.log(error);
       }
@@ -55,28 +76,54 @@ const Profile = () => {
     
     if (params!==user._id) {
       fetchFriend()
-      userFriends?.friends.forEach((friendId)=>
-      users.filter((user)=>user._id!==friendId)
-     )
+      console.log(userFriends)
+      // setUserFriends(userFriend?.friends)
+      // userFriends?.forEach((friendId)=>
+      // allUsers.filter((user)=>user?._id!==friendId)
+    //  )
     } else {
-      user?.friends.forEach((friendId)=>
-       users.filter((user)=>user._id!==friendId)
-      )
+      console.log(user?.friends);
+      
+      // user.friends?.forEach((Id)=>allUsers.filter((u)=>u._id!==Id))
+     setAllUsers( allUsers?.filter((u)=>u._id!==user?.friends.map((Id)=>Id)))
+      // user.friends?.forEach((Id)=>allUsers.filter((u)=>u._id!==Id))
+      console.log(allUsers);     
+    
     }
    },[params])
 
 
-// useEffect(()=>{
-
-// },[usersId])
+useEffect(()=>{
+  usersId&&allUsers.filter((u)=>u._id!==usersId)
+  
+  const addFriends=async()=>{
+    try {
+      const res=await axios.put(`/api/chat/addFriend/${user._id}?friendId=${usersId}`);
+      console.log(res.data);
+      if(res.status===200){
+      dispatch({type:"UPDATE_FRIENDS",payload:usersId})
+      params===user._id&&setUserFriends(prev=>[...prev,usersId])
+      setAllUsers(allUsers.filter((u)=>u._id!==usersId))
+      console.log(userFriends);
+      console.log(allUsers);  
+    }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  usersId&&addFriends();
+},[usersId])
 
     //update name and about
     const submitHandler=async(e)=>{
         e.preventDefault();
         if(Name.current?.value){
           try {
-            const req=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value})
-            console.log(req.data);
+            const res=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value})
+            console.log(res.data);
+            if(res.status===200){
+              dispatch({type:"UPDATE_USERNAME",payload:Name.current.value})
+            }
             setIsName(!isName)
           } catch (error) {
             console.log(error);
@@ -84,16 +131,24 @@ const Profile = () => {
         }
         if(About.current?.value){
           try {
-            const req=await axios.put(`/api/auth/user/profile/${params}`,{about:About.current.value})
-            console.log(req.data);
+            const res=await axios.put(`/api/auth/user/profile/${params}`,{about:About.current.value})
+            console.log(res.data);
+            if(res.status===200){
+              dispatch({type:"UPDATE_DESCRIPTION",payload:About.current.value})
+            }
             setIsAbout(!isAbout)
           } catch (error) {
             console.log(error);
           }
         }
     }
-    const uploadFile=(e)=>{
-      e.preventDefault()
+    const handleProfileImg=(e)=>{
+      setShowForm(!showForm);
+      setImageSettings(false)
+    }
+    const handleBackImg=()=>{
+      setShowForm(!showForm);
+      setImageSettings(true)
     }
   return (
     <div className='profileContainer'>
@@ -101,32 +156,31 @@ const Profile = () => {
       <span>Loading...</span>
       :
       <>
+       {showForm&&<UserImages changeSettings={imageSettings} socket={socket}/> }
       <div className="profileLeftWrapper">
           <div className="topLeftWrapper">
             {params===user._id?
-             <img src={user?.backImg?`/images/${user.backImg}`:"/assets/noImage.jpg"} alt="" style={{objectFit:"cover",borderRadius:"0 0 10px 0"}}  width="100%" height="85%"/>
+             <img src={user?.backImg ? `${process.env.REACT_APP_PUBLIC_FOLDER}${user.backImg}`:"/assets/noImage.jpg"} alt="" style={{objectFit:"cover",borderRadius:"0 0 10px 0"}}  width="100%" height="85%"/>
             :
-            <img src={userFriends?.backImg?`/images/${userFriends.backImg}`:"/assets/noImage.jpg"} alt="" style={{objectFit:"cover",borderRadius:"0 0 10px 0"}}  width="100%" height="85%"/>
+            <img src={userFriend?.backImg?`${process.env.REACT_APP_PUBLIC_FOLDER}${userFriend.backImg}`:"/assets/noImage.jpg"} alt="" style={{objectFit:"cover",borderRadius:"0 0 10px 0"}}  width="100%" height="85%"/>
             }
                 
            {params===user?._id&&
-            <label htmlFor="backImg" title='change Back Image' className='backImageBtn' >
+            <button  title='change Back Image' className='backImageBtn' onClick={handleBackImg} >
                 <AddAPhoto/>
-                <input style={{display:"none"}} type="file" name="" id="backImg" />
-            </label>
+            </button>
             }
             <div className='profileImgHolder'>
                 {params===user._id?
-                  <img src={user.profilePic?`/assets/${user.profilePic}`:"/assets/noAvatar2.webp"} alt="profileImg"  />
+                  <img src={user?.profilePic ? `${process.env.REACT_APP_PUBLIC_FOLDER}${user.profilePic}`:"/assets/noAvatar2.webp"} alt="profileImg"  />
                 :
-                <img src={userFriends.profilePic?`/assets/${userFriends.profilePic}`:"/assets/noAvatar2.webp"} alt="profileImg"  />
+                <img src={userFriend?.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${userFriend.profilePic}`:"/assets/noAvatar2.webp"} alt="profileImg"  />
                 }
                 {params===user?._id&&
                 // <form onSubmit={uploadFile}>
-                <label htmlFor="file" className='changeProfileBtn' title="Change Profile Image" >
+                <button className='changeProfileBtn' title="Change Profile Image" onClick={handleProfileImg}>
                     <AddAPhoto/>
-                    <input style={{display:"none"}} type="file" name="" id="file" />
-                </label>
+                </button>
                 
                 }
                 {/* <input type="file" name="" id="" /> */}
@@ -147,7 +201,7 @@ const Profile = () => {
                     {params===user._id?
                     <span className="userInfo name" >{user.username}</span>
                     :
-                    <span className="userInfo name" >{userFriends.username}</span>
+                    <span className="userInfo name" >{userFriend?.username}</span>
                     }
                     {params===user?._id&&
                     <span onClick={()=>setIsName(!isName)} className='editButton' title='Change Name'><Edit style={{color:"var(--textInputIcons)"}}/></span>
@@ -169,7 +223,7 @@ const Profile = () => {
                     {params===user._id?
                     <span className="userInfo">{user.userdesc}</span>
                     :
-                    <span className="userInfo">{userFriends.userdesc}</span>
+                    <span className="userInfo">{userFriend.userdesc}</span>
                     }
                     {params===user?._id&&
                     <span onClick={()=>setIsAbout(!isAbout)} className='editButton' title='Change About'><Edit style={{color:"var(--textInputIcons)"}}/></span>
@@ -183,7 +237,7 @@ const Profile = () => {
                {params===user._id?
                <span className="userNumberWrapper">{user?.phonenumber}</span>
               :
-              <span className="userNumberWrapper">{userFriends?.phonenumber}</span>
+              <span className="userNumberWrapper">{userFriend?.phonenumber}</span>
               }
               </div>
             </div>
@@ -195,15 +249,11 @@ const Profile = () => {
                 </div>
                 <span>Friends</span>
                 <div className="friendListWrapper">
-                { user._id===params?
-                user.friends.map((eachFriend)=>
-                <Friend friendsId={eachFriend} currentUserProfileId={params} key={eachFriend}/>
-               )
-                :
-                userFriends.friends?.map((friends)=>
-                 <Friend friendsId={friends} currentUserProfileId={params} key={friends}/>
-                )
-
+                {
+            
+                userFriends.map((friend)=>
+                 <Friend friendsId={friend} currentUserProfileId={params} key={friend}/>)
+                
                 }
                 </div>
             </div>
@@ -214,11 +264,11 @@ const Profile = () => {
         <Link to="/" style={{textDecoration:"none"}} title='go to ChatPage'><Close style={{color:"var(--textInputIcons)"}}/></Link>
        </span>
        <div className="newUsersContainer">
-        {users.map((element)=>{
-          <div onClick={()=>setUsersId(element._id)}>
+        {allUsers?.map((element)=>
+          <div onClick={()=>setUsersId(element._id)} key={element._id}>
           <NewUser userHolder={element}/>
           </div>
-        })
+        )
 
         }
 

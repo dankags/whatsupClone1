@@ -6,8 +6,16 @@ import { Context } from '../../contextAPI/context'
 import  axios  from 'axios'
 
 export const Friend = ({friendsId,currentUserProfileId}) => {
-   const {user}=useContext(Context);
-   const [friend,setUserFriend]=useState(null);
+   const {user,socket}=useContext(Context);
+   const [friend,setUserFriend]=useState(null)
+   const [changedProfileUser,setChangedProfileUser]=useState(null)
+
+   useEffect(()=>{
+    socket?.current.on("userChangedProfile",data=>{
+     setChangedProfileUser(data)
+    })
+   },[])
+
    useEffect(()=>{
       const fetchFriend=async()=>{
         try {
@@ -20,10 +28,15 @@ export const Friend = ({friendsId,currentUserProfileId}) => {
       }
       fetchFriend();
     },[friendsId])
+
+   useEffect(()=>{
+    changedProfileUser&&friendsId===changedProfileUser.userChangerId&&setUserFriend(prev=>({...prev,profilePic:changedProfileUser.userImage}))
+   },[changedProfileUser])
+
   return (
     <div className='friendContainer'>
      <div className="friendImg">
-        <img src={friend?.profilePic?`/assets/${friend.profilePic}`:"/assets/noAvatar2.webp"} alt="" />
+        <img src={friend?.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${friend.profilePic}`:"/assets/noAvatar2.webp"} alt="" />
      </div>
      <div className="friendsName">
       

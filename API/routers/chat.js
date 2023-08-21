@@ -48,5 +48,45 @@ router.get("/friends/profile/:id",async(req,res)=>{
         res.status(404).json(err);
     }
 });
-
+//add as friend
+router.put("/addFriend/:id",async(req,res)=>{
+    if (req.params.id!==req.query.friendId) {
+        try {
+            const user=await User.findById(req.params.id);
+            const newFriend=await User.findById(req.query.friendId)
+          if (!user.friends.includes(req.query.friendId)||!newFriend.friends.includes(req.params.id)) {
+            await user.updateOne({$push:{friends:req.query.friendId}})
+            await newFriend.updateOne({$push:{friends:req.params.id}})
+            res.status(200).json("friend added successfully")
+          } else {
+            res.status(403).json("user already your fiend")
+          }
+        } catch (err) {
+            res.status(404).json(err);
+        }
+    } else {
+        res.status(403).json("you cannot be your own friend")
+    }
+    
+});
+//update background Image
+router.put("/updateBackground/:id",async(req,res)=>{
+    try {
+        const user=await User.findById(req.params.id);
+        await user.updateOne({backImg:req.body.filename})
+        res.status(200).json("updated background Successfully");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+  })
+   //update user profile
+ router.put("/updateProfile/:id",async(req,res)=>{
+    try {
+        const user=await User.findById(req.params.id);
+       await user.updateOne({profilePic:req.body.filename})
+        res.status(200).json("updated profile Successfully");
+    } catch (err) {
+        res.status(500).json(err);
+    }
+  });
 module.exports=router;

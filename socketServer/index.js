@@ -38,14 +38,14 @@ io.on("connection",(socket)=>{
     socket.on("sendOpenedConv",({senderId,receiverId,condition})=>{
         const receiver=getUser(receiverId);
         io.to(receiver?.socketId).emit("getOpenedConv",{
-            receiverId,
+            senderId,
             condition,
            });
         //    console.log(sender);   
     })
-    socket.on("changedProfile",({userChangerId})=>{
-      
-        io.emit("userChangedProfile",{userChangerId});
+    socket.on("changedProfile",({userChangerId,userImage})=>{
+       
+        io.emit("userChangedProfile",{userChangerId,userImage});
     })
    socket.on("disconnect",()=>{
     removeUser(socket.id);

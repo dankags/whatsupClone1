@@ -19,13 +19,44 @@ export const AuthReducer=(state,action)=>{
             isFetching:false,
             error:action.payload
         };
-    case "UPDATE_FRIENDS":
+        
+    case "INITIALIZE_SOCKET":
         return{ 
-            user: state.friends.push(action.payload),
-            isFetching:false,
-            error:false
+            ...state,
+            socket:action.payload
             };
-  
+    case "UPDATE_USERNAME":
+        return{ 
+            ...state,
+            user:{
+             ...state.user,
+             username:action.payload,   
+            }
+            };
+    case "UPDATE_DESCRIPTION":
+        return{ 
+            ...state,
+            user:{
+             ...state.user,
+             userdesc:action.payload,   
+            }
+            }; 
+    case "UPDATE_PROFILE":
+        return{ 
+            ...state,
+            user:{
+             ...state.user,
+             profilePic:action.payload,   
+            }
+            };       
+    case "UPDATE_BACKGROUNDIMG":
+        return{ 
+            ...state,
+            user:{
+             ...state.user,
+             backImg:action.payload,   
+            }
+            };                   
     default:
         return state;
   }

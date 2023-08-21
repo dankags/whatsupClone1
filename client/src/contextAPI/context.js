@@ -57,6 +57,31 @@ export const ConversationContextProvider = (props) => {
   )
 }
 
+
+const formStatecontext=createContext({
+  display:null,
+  setDisplay:()=>{}
+})
+
+const FormStateProvider=({children})=>{
+  const setDisplay=(displayState) => {
+    setFormState({...formState, display:displayState})
+  }
+  const initState={
+    display:null,
+    setDisplay:setDisplay
+  }
+
+  const [formState, setFormState] = useState(initState)
+  return(
+   <formStatecontext.Provider value={formState}>
+    {children}
+   </formStatecontext.Provider>
+
+  )
+}
+
+
 // creates a main context which stores user data
 export const Context=createContext(INITIAL_STATE);
 
