@@ -152,11 +152,13 @@
     outline: none;
     border: none;
     border-bottom: 2px solid #35897e;
-    border-radius: 5px;
+    border-radius: 2px;
     margin:0 10px;
     font-size: 15px;
     padding-left: 10px;
     font-weight: 500;
+    background-color: var(--main);
+    color:var(--textColor);
 }
 .searchBarWrapper>button{
     width: 35px;
@@ -167,6 +169,7 @@
     align-items: center;
     border-radius: 50%;
     cursor: pointer;
+    background-color: var(--main);
 }
 .profileRightWrapper>span{
     font-size: 30px;
@@ -190,7 +193,7 @@
     border: 3px solid var(--main);
     right: 0;
     bottom: 6%;
-    background-color: rgb(187, 187, 187);
+    background-color: #bbbbbb;
     cursor: pointer;
 }
 .changeProfileBtn>svg{
@@ -208,6 +211,6 @@
     width:35px;
     height: 35px;
     border-radius: 50%;
-    border: 3px solid white;
-    background-color: rgb(226, 226, 226);
+    border: 3px solid #ffffff;
+    background-color: #bbbbbb;
 }

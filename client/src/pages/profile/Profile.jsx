@@ -223,7 +223,7 @@ useEffect(()=>{
                     {params===user._id?
                     <span className="userInfo">{user.userdesc}</span>
                     :
-                    <span className="userInfo">{userFriend.userdesc}</span>
+                    <span className="userInfo">{userFriend?.userdesc}</span>
                     }
                     {params===user?._id&&
                     <span onClick={()=>setIsAbout(!isAbout)} className='editButton' title='Change About'><Edit style={{color:"var(--textInputIcons)"}}/></span>
@@ -251,7 +251,7 @@ useEffect(()=>{
                 <div className="friendListWrapper">
                 {
             
-                userFriends.map((friend)=>
+                userFriends?.map((friend)=>
                  <Friend friendsId={friend} currentUserProfileId={params} key={friend}/>)
                 
                 }

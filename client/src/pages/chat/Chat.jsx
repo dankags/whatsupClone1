@@ -133,7 +133,7 @@ useEffect(()=>{
       console.log(error);
     }
   }
-  updateUnReadMess()
+  currentConversation?.members.includes(openedConv.senderId)&&updateUnReadMess()
   fetchMessages()
   setPrevConv(currentConversation)
   },[currentConversation])
