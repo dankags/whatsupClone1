@@ -16,7 +16,7 @@
    --chatClicked:#ece8e8;
    --callBtnColor:rgb(209, 209, 209);
    --callIconColor:rgb(12, 156, 60)
-   --chatPageTheme: /public/assets/lightMode.jpg;
+ 
 }
 #root[data-theme="dark"]{
    --originalTextColor:grey;
