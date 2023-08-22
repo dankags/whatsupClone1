@@ -11,14 +11,13 @@ import { UserImages } from '../../components/changeUserImages/UserImages'
 
 const Profile = () => {
     const [isName,setIsName]=useState(false)
-    const {socket}=useContext(LanguageContext)
     const [isAbout,setIsAbout]=useState(false)
     const [userFriends,setUserFriends]=useState(null)
     const [userFriend,setUserFriend]=useState(null)
     const [allUsers,setAllUsers]=useState(null);
     const [usersId,setUsersId]=useState(null);
     const [showForm,setShowForm]=useState(false)
-    const {user,dispatch}=useContext(Context)
+    const {user,dispatch,socket}=useContext(Context)
     const [finishedFetching,setFinishedFetching]=useState(true)
     const [imageSettings,setImageSettings]=useState(false)
     const About=useRef();
@@ -28,7 +27,7 @@ const Profile = () => {
     // console.log(socket.current);
     useEffect(()=>{
       
-    
+      params===user._id&&setFinishedFetching(false)
       params===user._id&&setUserFriends(user.friends)
       const fetchUsers=async()=>{
         try {
@@ -38,6 +37,7 @@ const Profile = () => {
           let useFriends=user?.friends
           useFriends.forEach(item=>data=data.filter(i=>i._id!==item))
            setAllUsers(data);
+          
         } catch (error) {
           console.log(error);
         }
@@ -48,11 +48,7 @@ const Profile = () => {
         setUserFriends(user?.friends)
 
       }
-      setTimeout(()=>{
-        
-        setFinishedFetching(!finishedFetching);
-        console.log(allUsers);
-      },3000)
+      
     },[])
     
    
@@ -69,6 +65,9 @@ const Profile = () => {
         const res= await axios.get(`/api/chat/friends/profile/${params}`);
           setUserFriend(res.data)
           setUserFriends(res.data.friends)
+          if(res.status===200){
+            setFinishedFetching(!finishedFetching);
+           }
       } catch (error) {
         console.log(error);
       }
@@ -76,19 +75,8 @@ const Profile = () => {
     
     if (params!==user._id) {
       fetchFriend()
-      console.log(userFriends)
-      // setUserFriends(userFriend?.friends)
-      // userFriends?.forEach((friendId)=>
-      // allUsers.filter((user)=>user?._id!==friendId)
-    //  )
     } else {
-      console.log(user?.friends);
-      
-      // user.friends?.forEach((Id)=>allUsers.filter((u)=>u._id!==Id))
      setAllUsers( allUsers?.filter((u)=>u._id!==user?.friends.map((Id)=>Id)))
-      // user.friends?.forEach((Id)=>allUsers.filter((u)=>u._id!==Id))
-      console.log(allUsers);     
-    
     }
    },[params])
 
@@ -119,8 +107,7 @@ useEffect(()=>{
         e.preventDefault();
         if(Name.current?.value){
           try {
-            const res=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value})
-            console.log(res.data);
+            const res=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value}) 
             if(res.status===200){
               dispatch({type:"UPDATE_USERNAME",payload:Name.current.value})
             }
@@ -132,7 +119,6 @@ useEffect(()=>{
         if(About.current?.value){
           try {
             const res=await axios.put(`/api/auth/user/profile/${params}`,{about:About.current.value})
-            console.log(res.data);
             if(res.status===200){
               dispatch({type:"UPDATE_DESCRIPTION",payload:About.current.value})
             }
@@ -156,7 +142,7 @@ useEffect(()=>{
       <span>Loading...</span>
       :
       <>
-       {showForm&&<UserImages changeSettings={imageSettings} socket={socket}/> }
+       {showForm&&<UserImages changeSettings={imageSettings} /> }
       <div className="profileLeftWrapper">
           <div className="topLeftWrapper">
             {params===user._id?

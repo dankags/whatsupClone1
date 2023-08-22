@@ -12,75 +12,32 @@ const INITIAL_STATE={
 
 
 
-export const LanguageContext = React.createContext({
-  language: null,
-  socket:null,
-  setSocket:()=>{},
-  setLanguage: () => {}
+export const ThemeContext = React.createContext({
+  theme: null,
+  chatBackImg:null,
+  setTheme:()=>{},
 })
 
-
-
-
-// export const  useMultipleContexts=(children)=>{
-//   const contextOne = useContext(LanguageContext);
-//   const contextTwo = useContext(CommingMessage);
-  
-
-
-  
-// }
-
-
 //sets the user socket id
-export const ConversationContextProvider = (props) => {
+export const ThemeProvider = (props) => {
 
-  const setLanguage = (language) => {
-    setState({...state, language: language})
-  }
-  const setSocket=(socket)=>{
-    setState({...state,socket:socket})
+  const setTheme = (theme,chatBackImg) => {
+    setState({...state, theme: theme,chatBackImg:chatBackImg})
   }
   const initState = {
-    language: null,
-    socket:null,
-    setSocket:setSocket,
-    setLanguage: setLanguage
+    theme: null,
+  chatBackImg:null,
+  setTheme:setTheme,
   } 
 
   const [state, setState] = useState(initState)
 
   return (
-    <LanguageContext.Provider value={state}>
+    <ThemeContext.Provider value={state}>
       {props.children}
-    </LanguageContext.Provider>
+    </ThemeContext.Provider>
   )
 }
-
-
-const formStatecontext=createContext({
-  display:null,
-  setDisplay:()=>{}
-})
-
-const FormStateProvider=({children})=>{
-  const setDisplay=(displayState) => {
-    setFormState({...formState, display:displayState})
-  }
-  const initState={
-    display:null,
-    setDisplay:setDisplay
-  }
-
-  const [formState, setFormState] = useState(initState)
-  return(
-   <formStatecontext.Provider value={formState}>
-    {children}
-   </formStatecontext.Provider>
-
-  )
-}
-
 
 // creates a main context which stores user data
 export const Context=createContext(INITIAL_STATE);

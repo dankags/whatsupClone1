@@ -17,16 +17,12 @@ function App() {
      <BrowserRouter>
       <Routes>
        <Route exact path='/' element={user?
-       <ConversationContextProvider>
        <Chat user={user}/>
-       </ConversationContextProvider>
        :<Navigate to="/login" replace/>}/>
        <Route path='/login' element={user?<Navigate to="/" replace/>:<Login/>}/>
        <Route path='/register' element={user? <Navigate to="/login" replace/>:<Register/>} />
        <Route path="/profile/:id" element={user&&
-       <ConversationContextProvider>
          <Profile/>
-       </ConversationContextProvider>
        }/>
       </Routes>
      </BrowserRouter>

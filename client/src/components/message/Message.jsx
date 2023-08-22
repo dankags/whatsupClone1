@@ -44,7 +44,6 @@ export default function Message({changedProfile,currentConv,currentUser,conversa
 
  useEffect(()=>{
   changedProfile&&setUpdateProfile(changedProfile)
-  console.log(changedProfile);
   const friendId=conversation.members.find(m=>m!==currentUser._id);
   userFriendId.current.id=friendId;
   changedProfile&&setuserFriend(prev=>({...prev,profilePic:changedProfile.userImage}))
@@ -110,8 +109,7 @@ useEffect(()=>{
  }
  fetchLastMessage()
 },[ownMessage,message])
-console.log(lastMess);
-console.log("incomming mess:"+message);
+
 useEffect(()=>{
   ownMessage?.senderId?ownMessageId.current.id=ownMessage.senderId:ownMessageId.current.id=null;
 },[ownMessage])

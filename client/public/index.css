@@ -20,7 +20,7 @@
 }
 #root[data-theme="dark"]{
    --originalTextColor:grey;
-   --main:#121212;
+   --main:#161616;
    --user_chat:#005c4b;
    --friend_chat:#202c33;
    --noOfMessages:#5ceba3;
@@ -28,7 +28,7 @@
    --chatBackgroungColor:#181818;
    --seenMessages:rgb(179, 179, 179);
    --textInputIcons:rgb(151, 150, 150);
-   --box_shadow:#1a1919;
+   --box_shadow:#101010;
    --chatClicked:#222222;
    --callBtnColor:rgb(185, 185, 185);
    --callIconColor:rgb(42, 117, 68);

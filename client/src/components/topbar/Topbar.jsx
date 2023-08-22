@@ -1,22 +1,27 @@
 import './Topbar.css'
-import {  MoreVert, NightsStay, PersonAdd, Search } from '@mui/icons-material'
+import {  MoreVert, NightsStay, PersonAdd, Search, WbSunny } from '@mui/icons-material'
 import { useContext, useEffect, useReducer, useState } from 'react';
 import {Link} from "react-router-dom"
 import React ,{Component}from 'react';
-import { Context } from '../../contextAPI/context';
+import { Context, ThemeContext } from '../../contextAPI/context';
 
 export default function Topbar() {
   const [currentUser, setcurrentUser] = useState({})
   const {user}=useContext(Context);
+  const [validateTheme,setValidateTheme]=useState(false)
+  const {setTheme}=useContext(ThemeContext)
+  let show;
+  const [searchClass, setsearchClass] = useState("searchBarDefault");
+  const [pageTitle, setpageTitle]=useState("Chats");
   useEffect(()=>{
     setcurrentUser(user);
+    setTheme("light","/assets/lightMode.jpg")
   },[user])
 
-   const [searchClass, setsearchClass] = useState("searchBarDefault");
-   const [pageTitle, setpageTitle]=useState("Chats");
    const chatPage=()=>{setpageTitle("Chats");}
    const statusPage=()=>{setpageTitle("Status");}
    const callPage=()=>{setpageTitle("Calls");}
+
  const changebar=()=>{
    let check=false;
    if (EventTarget) {
@@ -31,23 +36,25 @@ export default function Topbar() {
    }
   
  };
- let validateTheme=false;
+ 
  const theme=()=>{
     if(validateTheme===false){
       document.getElementById("root").setAttribute("data-theme","dark");
       if(document.getElementById("root").getAttribute("data-theme")==="dark"){
-        // document.querySelector(".chatmainContainer").style.backgroundImage="url('/public/assets/light_bak_w.jpg')"
+        console.log("dark");
+       setTheme("dark","/assets/darkMode.jpg")
       };
-      validateTheme=true;
+      setValidateTheme(prev=>!prev)
     }else{
       document.getElementById("root").setAttribute("data-theme","light");
       if(document.getElementById("root").getAttribute("data-theme")==="light"){
-        // document.querySelector(".chatmainContainer").style.backgroundImage="url('/public/assets/HD-wallpaper-whatsapp-v-background-doodle-pattern-patterns-whatsapp-thumbnail.jpg')"
+        console.log("light");
+       setTheme("light","/assets/lightMode.jpg")
       };
-      validateTheme=false;
+      setValidateTheme(prev=>!prev)
     }
  };
- let show;
+ 
  const showMenu=()=>{
   if(show===true){
     document.getElementById("Menu").style.display="block";
@@ -71,7 +78,7 @@ export default function Topbar() {
         </div>
         <div className="topRight">
           <div className="RightIconcontainer">
-          <span title="Theme" onClick={theme}>{validateTheme===false ? <NightsStay className='topbarIcon'/> : "dark" }</span>
+          <span title="Theme" onClick={theme}>{validateTheme===false ? <NightsStay className='topbarIcon'/> :<WbSunny className='topbarIcon'/> }</span>
           <span title="Acconts"><PersonAdd className='topbarIcon'/></span>
           <span title="Menu" onClick={showMenu}><MoreVert className='topbarIcon'/></span>
           <div id='Menu' className='menu' >

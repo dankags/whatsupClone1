@@ -8,15 +8,15 @@ import React ,{Component, useContext, useEffect,useMemo,useRef, useState}from 'r
 import {io} from 'socket.io-client'
 import { Link } from 'react-router-dom';
 import Message from '../../components/message/Message';
-import { Context, LanguageContext } from '../../contextAPI/context';
+import { Context, ThemeContext} from '../../contextAPI/context';
 import { Layout } from '../../components/layout/Layout';
 import Topbar from '../../components/topbar/Topbar';
 
 
 export default function Chat(user) {
   const socket=useRef(); 
-  const {setSocket}=useContext(LanguageContext)
   const {user:User,dispatch}=useContext(Context)
+  const {theme,chatBackImg}=useContext(ThemeContext)
   const [inCommingMessage,setInCommingMessage]=useState(null)
   const [onlineFriends,setOnlineFriends]=useState(null);
   const [currentConversation,setCurrentCoversation]=useState(null)
@@ -26,6 +26,8 @@ export default function Chat(user) {
   const [changedProfileId,setChangedProfileId]=useState(null);
   const senderMessage=useRef();
   const scrollRef=useRef();
+  const abortController= useRef(new AbortController())
+  const [initialMessIsRead,setInitialMessIsRead]=useState(false)
   const [chatIsOnline,setChatIsOnline]=useState(null);
   const [myOwnWrittenMess,setOwnWrittenMess]=useState(null);
   const [receiver,setReceiverId]=useState(null);
@@ -34,20 +36,19 @@ export default function Chat(user) {
   const [openedConv,setOpenedConv]=useState(null);
   const [prevConv,setPrevConv]=useState(null);
   const [refetchConv,setRefetchConv]=useState(false)
-
+  console.log(theme);
+  console.log(chatBackImg);
   //initialize socket and waits for conversation to be fetched for 3 secs
 useEffect(()=>{
-  setTimeout(()=>{
-    // socket.current=io("ws://localhost:7000");
-    // setSocket(socket);
-   
-  // setConversations(fetchFriendsConv(User))
-  setIsLoading(false)
-  },4000)
+  
   const fetchFriendsConv=async()=>{
     try {
       const res= await axios.get("/api/conversations/"+User._id);
       setConversations(res.data)
+      if(res.status===200){
+
+        setIsLoading(false)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -65,6 +66,8 @@ useEffect(()=>{
   })
   socket.current.on("getOpenedConv",data=>{
     setOpenedConv(data)
+    setInitialMessIsRead(data.condition)
+    
   })
   socket.current.on("userChangedProfile",data=>{
     
@@ -72,7 +75,7 @@ useEffect(()=>{
     
   })
 },[])
-console.log(openedConv);
+
 //get online users from socket server
 useEffect(()=>{
   socket?.current.emit("newUser",User._id);
@@ -106,6 +109,8 @@ useMemo(()=>{
 //fetch messages from a database and notify the convesation users that you opened this conversation
 //thats if the user is in online in order to register that messages are read by using blue tick
 useEffect(()=>{ 
+  const controller=new AbortController();
+  
   socket?.current.emit("sendOpenedConv",{
     senderId:User._id,
     receiverId:currentConversation?.members.find(m=>m!==User._id),
@@ -116,9 +121,10 @@ useEffect(()=>{
     receiverId:prevConv?.members.find(m=>m!==User._id),
     condition:false,
   })
+  
   const updateUnReadMess=async()=>{
     try {
-      const res=await axios.put("/api/message/toReadMessages/"+currentConversation?._id);
+      const res=await axios.put("/api/message/toReadMessages/"+currentConversation?._id,{signal:controller.signal});
     } catch (error) {
       console.log(error);
     }
@@ -126,23 +132,23 @@ useEffect(()=>{
   const fetchMessages=async()=>{
     try {
        
-      const res=await axios.get("/api/message/"+currentConversation?._id);
+      const res=await axios.get("/api/message/"+currentConversation?._id,{signal:controller.signal});
       setMessages(res.data)
       
     } catch (error) {
       console.log(error);
     }
   }
-  currentConversation?.members.includes(openedConv.senderId)&&updateUnReadMess()
+  currentConversation?.members.includes(openedConv?.senderId)&&updateUnReadMess()
   fetchMessages()
   setPrevConv(currentConversation)
+  return()=>controller.abort();
   },[currentConversation])
 
 // update currecnt opened conversation and updates the grey ticks into blue ticks 
 useEffect(()=>{
   const updateUnReadMess=async()=>{
     if (currentConversation?.members.includes(openedConv?.senderId)) {
-      console.log(currentConversation.members);
     try {
       const res=await axios.put("/api/message/toReadMessages/"+currentConversation?._id);
       if(res.status===200){
@@ -154,8 +160,13 @@ useEffect(()=>{
     }
   }
   }
-  updateUnReadMess()
-  
+  if(openedConv?.condition){
+   
+    setInitialMessIsRead(true)
+   currentConversation?.members.includes(openedConv?.senderId)&&updateUnReadMess()
+}else{
+// setInitialMessIsRead(false)
+}
 },[openedConv])
 
   //scroll into view or to the last message
@@ -165,12 +176,13 @@ useEffect(()=>{
 
   //fetch user friend information
   useEffect(()=>{
+    const controller=new AbortController();
    let friendId=currentConversation?currentConversation.members.find(m=>m!==User._id):null;
     // setInitialState(true)
     const fetchFriend=async(friendId)=>{
       try { 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        const res= await axios.get("/api/chat/friends/profile/"+friendId);
+        const res= await axios.get("/api/chat/friends/profile/"+friendId,{signal:controller.signal});
         setUserFriend(res.data);
       } catch (error) {
         if (error===AxiosError) {
@@ -179,6 +191,7 @@ useEffect(()=>{
       }
     }
     fetchFriend(friendId);
+    return()=>controller.abort();
   },[currentConversation])
 
   useEffect(()=>{
@@ -191,7 +204,7 @@ useEffect(() => {
   let conv=conversations?.find(item=>item.members.find(m=>m===inCommingMessage?.senderId))
   if (inCommingMessage) {
     setRecentConv(conversations.find(item=>item.members.includes(inCommingMessage.senderId)))
-  console.log(recentConv);
+ 
   let filteredArray= conversations.filter(item=>item!==conv)
   setConversations(filteredArray)
   setConversations(prev=>[conv,...prev])
@@ -219,11 +232,12 @@ const fetchFriendsConv=async()=>{
 //upload new message to database and sends the new message to the other user in the conversation via socket
 const handleSubmit=async(e)=>{
   e.preventDefault();
+  let confirm=false
   const currentMessage={
     conversationId:currentConversation._id,
     senderId:User._id,
     messages:senderMessage.current.value,
-    isRead:openedConv?.condition
+    isRead:openedConv?.condition ? currentConversation?.members.includes(openedConv?.senderId):currentConversation?.members.includes(openedConv?.senderId)&&openedConv?.condition===false&&confirm
   }
   console.log(User._id);
   console.log(openedConv?.senderId);
@@ -261,7 +275,6 @@ const handleSubmit=async(e)=>{
   try {
     const res=await axios.post("/api/message",currentMessage);
     setMessages([...messages,res.data])
-    console.log(res.status);
     let filteredConv=conversations.filter(item=>item!==conv)
     if(res.status===201){
     setConversations(filteredConv)
@@ -311,7 +324,7 @@ const handleSubmit=async(e)=>{
     </div>
     {currentConversation?
    
-      <div className="chatmainContainer">
+      <div className="chatmainContainer" style={theme==="light"?{backgroundImage:`url(${chatBackImg})`}:{backgroundImage:`url(${chatBackImg})`}}>
             <div className="chatsTopbarContainer">
               
               <div className="topbarLeft">
@@ -340,10 +353,10 @@ const handleSubmit=async(e)=>{
             <div className="messageContainer">
             <div  >
              {
-             messages.map((info)=>
+             messages?.map((info)=>
              
-                  <div ref={scrollRef}>
-                   <Chats friend={userFriend} messageObj={info} own={User._id===info?.senderId} key={info?._id} />
+                  <div ref={scrollRef} key={info._id}>
+                   <Chats friend={userFriend} messageObj={info} own={User._id===info?.senderId}  />
                 </div>
              )
              

@@ -216,7 +216,7 @@ hr{
     flex: 8.5;
     display:flex;
     flex-direction:column;
-    background-image:url("/public/assets/lightMode.jpg");
+    /* background-image:url("/public/assets/lightMode.jpg"); */
     /* background-image:url("/public/assets/light_bak_w.jpg"); */
     /* background-color: #dad4cc;
     background-blend-mode:soft-light; */ 
