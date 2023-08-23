@@ -41,14 +41,14 @@ export default function Topbar() {
     if(validateTheme===false){
       document.getElementById("root").setAttribute("data-theme","dark");
       if(document.getElementById("root").getAttribute("data-theme")==="dark"){
-        console.log("dark");
+        
        setTheme("dark","/assets/darkMode.jpg")
       };
       setValidateTheme(prev=>!prev)
     }else{
       document.getElementById("root").setAttribute("data-theme","light");
       if(document.getElementById("root").getAttribute("data-theme")==="light"){
-        console.log("light");
+       
        setTheme("light","/assets/lightMode.jpg")
       };
       setValidateTheme(prev=>!prev)

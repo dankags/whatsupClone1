@@ -22,7 +22,7 @@ io.on("connection",(socket)=>{
     io.emit("getUsers",users);
     // console.log(users);
    })
-    socket.on("sendMessage",({senderId,receiverId,textmessage})=>{
+    socket.on("sendMessage",({senderId,receiverId,media,textmessage})=>{
         
         const receiver=getUser(receiverId);
         
@@ -33,6 +33,7 @@ io.on("connection",(socket)=>{
         io.to(receiver.socketId).emit("getMessage",{
          senderId,
          textmessage,
+         media
         });
     })
     socket.on("sendOpenedConv",({senderId,receiverId,condition})=>{

@@ -12,10 +12,13 @@ const conversationRouter=require("./routers/conversations");
 const messageRouter=require("./routers/message");
 
 dotenv.config();
-mongoose.connect(process.env.MONGO_URL,()=>{
-    console.log("connected to MongoDB");
-});
-mongoose.set('strictQuery', false);
+mongoose.connect(process.env.MONGO_URL,{
+    useNewUrlParser:false,
+    useUnifiedTopology:false,
+})
+.then(()=>console.log("connected to MONGO_DB"))
+.catch((err)=>console.log(err))
+// mongoose.set('strictQuery', false);
 
 app.use("/images",express.static(path.join(__dirname,"public/images")));
 //middleWare

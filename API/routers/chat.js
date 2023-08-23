@@ -3,9 +3,11 @@ const Chat=require("../models/chats");
 const User=require("../models/user")
 const Conversation = require('../models/conversation');
 const Media = require("../models/media");
+const verify = require("../verifyToken");
 
 //get all user friends 
 router.get("/friends/:userId",async(req,res)=>{
+    if(req.user.id===req.params.userId){
     try {
         const user=await User.findById({_id:req.params.userId});
         const followedFriends=[];
@@ -20,9 +22,13 @@ router.get("/friends/:userId",async(req,res)=>{
     } catch (err) {
         res.status(404).json(err);
     }
+}else{
+  res.status(403).json("you cannot get other users friends")
+}
 })
 //fetch all users
 router.get("/allUsers",async(req,res)=>{
+    // if(req.user.id||req.user.isAdmin){
     try {
         const users=await User.find();
         let usersSentSchema=[]
@@ -35,6 +41,9 @@ router.get("/allUsers",async(req,res)=>{
     } catch (err) {
         res.status(404).json(err);
     }
+// }else{
+//     res.status(403).json("You can update olny your account")
+// }
 })
 //get friends profile
 router.get("/friends/profile/:id",async(req,res)=>{
@@ -49,28 +58,34 @@ router.get("/friends/profile/:id",async(req,res)=>{
     }
 });
 //add as friend
-router.put("/addFriend/:id",async(req,res)=>{
-    if (req.params.id!==req.query.friendId) {
+router.put("/addFriend/:id",verify,async(req,res)=>{
+    if(req.user.id===req.params.id){
+
+      if (req.params.id!==req.query.friendId) {
         try {
             const user=await User.findById(req.params.id);
             const newFriend=await User.findById(req.query.friendId)
-          if (!user.friends.includes(req.query.friendId)||!newFriend.friends.includes(req.params.id)) {
-            await user.updateOne({$push:{friends:req.query.friendId}})
-            await newFriend.updateOne({$push:{friends:req.params.id}})
-            res.status(200).json("friend added successfully")
-          } else {
-            res.status(403).json("user already your fiend")
-          }
+            if (!user.friends.includes(req.query.friendId)||!newFriend.friends.includes(req.params.id)) {
+                await user.updateOne({$push:{friends:req.query.friendId}})
+                await newFriend.updateOne({$push:{friends:req.params.id}})
+                res.status(200).json("friend added successfully")
+            } else {
+                res.status(403).json("user already your fiend")
+            }
         } catch (err) {
             res.status(404).json(err);
         }
-    } else {
+      } else {
         res.status(403).json("you cannot be your own friend")
-    }
+      }
     
+    }else{
+        res.status(403).json("You can update olny your account")
+    }
 });
 //update background Image
-router.put("/updateBackground/:id",async(req,res)=>{
+router.put("/updateBackground/:id",verify,async(req,res)=>{
+    if(req.user.id===req.params.id){
     try {
         const user=await User.findById(req.params.id);
         await user.updateOne({backImg:req.body.filename})
@@ -78,9 +93,13 @@ router.put("/updateBackground/:id",async(req,res)=>{
     } catch (err) {
         res.status(500).json(err);
     }
+}else{
+    res.status(403).json("You can update olny your account")
+}
   })
    //update user profile
- router.put("/updateProfile/:id",async(req,res)=>{
+ router.put("/updateProfile/:id",verify,async(req,res)=>{
+    if(req.user.id===req.params.id){
     try {
         const user=await User.findById(req.params.id);
        await user.updateOne({profilePic:req.body.filename})
@@ -88,5 +107,8 @@ router.put("/updateBackground/:id",async(req,res)=>{
     } catch (err) {
         res.status(500).json(err);
     }
+}else{
+    res.status(403).json("You can update olny your account")
+}
   });
 module.exports=router;

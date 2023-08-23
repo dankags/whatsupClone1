@@ -24,13 +24,14 @@ export default function Chats ({own,friend,messageObj}) {
     return `${toTwelveSystem}:${minutes<10?"0"+minutes:minutes} ${localTime}`
   }
   return (
-    <div className={own ? 'chatsContainer own' : 'chatsContainer '}>
+    <div className={own ? 'chatsContainer own' : 'chatsContainer '} >
      <div className="chatsWrapper">
       <div className="chatsMain">
        <img src={own ? getChatProfile(user?.profilePic) :getChatProfile(friend?.profilePic)} alt="" className="profilePic" />  
        
       </div>
       <div className="chatsWrapperContent">
+        {message.media&&<img src={`${process.env.REACT_APP_PUBLIC_FOLDER}${message?.media}`} alt={message?.media} style={{objectFit:"cover",padding:"10px"}} width="250px" height="250px" loading='lazy'/>}
       <p className="actualtext">{message.messages}</p>
        <div className="bottomchatsWrapper">
         {message.isRead?

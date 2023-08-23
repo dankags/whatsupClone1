@@ -51,7 +51,7 @@ const Profile = () => {
       
     },[])
     
-   
+//fetch each friends profile if the params id doesnot match with user id   
    useEffect(()=>{
    
     allUsers&&user?.friends.map((element)=>
@@ -80,13 +80,13 @@ const Profile = () => {
     }
    },[params])
 
-
+//addfriends to user friends Array
 useEffect(()=>{
   usersId&&allUsers.filter((u)=>u._id!==usersId)
   
   const addFriends=async()=>{
     try {
-      const res=await axios.put(`/api/chat/addFriend/${user._id}?friendId=${usersId}`);
+      const res=await axios.put(`/api/chat/addFriend/${user._id}?friendId=${usersId}`,{Headers:{token:"Bearer "+user.accessToken}});
       console.log(res.data);
       if(res.status===200){
       dispatch({type:"UPDATE_FRIENDS",payload:usersId})
@@ -107,7 +107,7 @@ useEffect(()=>{
         e.preventDefault();
         if(Name.current?.value){
           try {
-            const res=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value}) 
+            const res=await axios.put(`/api/auth/user/profile/${params}`,{name:Name.current.value},{headers:{token:"Bearer "+user.accessToken}}) 
             if(res.status===200){
               dispatch({type:"UPDATE_USERNAME",payload:Name.current.value})
             }
@@ -118,7 +118,7 @@ useEffect(()=>{
         }
         if(About.current?.value){
           try {
-            const res=await axios.put(`/api/auth/user/profile/${params}`,{about:About.current.value})
+            const res=await axios.put(`/api/auth/user/profile/${params}`,{about:About.current.value},{headers:{token:"Bearer "+user.accessToken}})
             if(res.status===200){
               dispatch({type:"UPDATE_DESCRIPTION",payload:About.current.value})
             }

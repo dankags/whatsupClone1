@@ -15,7 +15,7 @@ export const UserImages = ({changeSettings}) => {
     const [imgSrc,setImgSrc]=useState(null)
     const {user,dispatch,socket}=useContext(Context)
     
-    console.log(socket)
+    console.log(user)
     //handle upload image
     const handleSubmit=async(e)=>{
         e.preventDefault();
@@ -41,7 +41,7 @@ export const UserImages = ({changeSettings}) => {
         
             if(changeSettings){
                 try {
-                    const res=await axios.put(`/api/chat/updateBackground/${user._id}`,{filename:img.imgName})
+                    const res=await axios.put(`/api/chat/updateBackground/${user._id}`,{filename:img.imgName},{headers:{token:"Bearer "+user.accessToken}})
                     console.log(res.data);  
                     if(res.status===200){
                         dispatch({type:"UPDATE_BACKGROUNDIMG",payload:img.imgName})
@@ -54,7 +54,7 @@ export const UserImages = ({changeSettings}) => {
             
             }else{
                 try{
-                    const res= await axios.put(`/api/chat/updateProfile/${user._id}`,{filename:img.imgName})
+                    const res= await axios.put(`/api/chat/updateProfile/${user._id}`,{filename:img.imgName},{headers:{token:"Bearer "+user.accessToken}})
                     console.log(res.data);
                     if(res.status===200){
                         dispatch({type:"UPDATE_PROFILE",payload:img.imgName})

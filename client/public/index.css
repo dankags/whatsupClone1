@@ -15,8 +15,8 @@
    --box_shadow:#d6d6d6;
    --chatClicked:#ece8e8;
    --callBtnColor:rgb(209, 209, 209);
-   --callIconColor:rgb(12, 156, 60)
- 
+   --callIconColor:rgb(12, 156, 60);
+   --createConversationColor:white;
 }
 #root[data-theme="dark"]{
    --originalTextColor:grey;
@@ -30,10 +30,9 @@
    --textInputIcons:rgb(151, 150, 150);
    --box_shadow:#101010;
    --chatClicked:#222222;
-   --callBtnColor:rgb(185, 185, 185);
-   --callIconColor:rgb(42, 117, 68);
-   --chatPageTheme:/public/assets/darkMode.jpg;
-   background-color: #42a1db;
+   --callBtnColor:#b9b9b9;
+   --callIconColor:#2a7544;
+   --createConversationColor:#242424;
 }
 body{
    background-color: var(--main);

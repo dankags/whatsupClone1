@@ -12,6 +12,7 @@ const chatSchema= new mongoose.Schema({
     },
     media:{
         type:String,
+        default:""
     },
     isRead:{
         type:Boolean,

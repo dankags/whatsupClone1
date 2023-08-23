@@ -2,7 +2,7 @@
 // import Side from '../../components/sideplace/Side'
 import './Chat.css'
 import Chats from '../../components/userchats/Chats';
-import { CallOutlined,VideocamOutlined,MoreVert,SendOutlined,EmojiEmotionsOutlined,AttachFileOutlined } from '@mui/icons-material';
+import { CallOutlined,VideocamOutlined,MoreVert,SendOutlined,EmojiEmotionsOutlined,AttachFileOutlined, Cancel, InsertComment, Close } from '@mui/icons-material';
 import axios,{AxiosError} from 'axios';
 import React ,{Component, useContext, useEffect,useMemo,useRef, useState}from 'react';
 import {io} from 'socket.io-client'
@@ -26,7 +26,11 @@ export default function Chat(user) {
   const [changedProfileId,setChangedProfileId]=useState(null);
   const senderMessage=useRef();
   const scrollRef=useRef();
-  const abortController= useRef(new AbortController())
+  const phoneNumber=useRef()
+  const [isImage,setIsImage]=useState(false)
+  const [file,setFile]=useState(null)
+  const [showFile,setShowFile]=useState(false)
+  const [imgSrc,setImgSrc]=useState(null)
   const [initialMessIsRead,setInitialMessIsRead]=useState(false)
   const [chatIsOnline,setChatIsOnline]=useState(null);
   const [myOwnWrittenMess,setOwnWrittenMess]=useState(null);
@@ -36,14 +40,14 @@ export default function Chat(user) {
   const [openedConv,setOpenedConv]=useState(null);
   const [prevConv,setPrevConv]=useState(null);
   const [refetchConv,setRefetchConv]=useState(false)
-  console.log(theme);
-  console.log(chatBackImg);
+
   //initialize socket and waits for conversation to be fetched for 3 secs
 useEffect(()=>{
-  
+   const controller=new AbortController();
+   
   const fetchFriendsConv=async()=>{
     try {
-      const res= await axios.get("/api/conversations/"+User._id);
+      const res= await axios.get("/api/conversations/"+User._id,{headers:{token:"Bearer "+User.accessToken},signal:controller.signal});
       setConversations(res.data)
       if(res.status===200){
 
@@ -59,6 +63,7 @@ useEffect(()=>{
   socket.current.on("getMessage",data=>{
     setInCommingMessage({
       senderId:data.senderId,
+      media:data.media,
       messages:data.textmessage,
       createdAt: Date.now()
      }
@@ -74,6 +79,7 @@ useEffect(()=>{
      setChangedProfileId(data)
     
   })
+  return()=>controller.abort()
 },[])
 
 //get online users from socket server
@@ -216,7 +222,7 @@ useEffect(() => {
 )
 const fetchFriendsConv=async()=>{
   try {
-    const res= await axios.get("/api/conversations/"+User._id);
+    const res= await axios.get("/api/conversations/"+User._id,{headers:{token:"Bearer "+User.accessToken}});
     setConversations(res.data)
     setRefetchConv(false)
   } catch (error) {
@@ -233,10 +239,13 @@ const fetchFriendsConv=async()=>{
 const handleSubmit=async(e)=>{
   e.preventDefault();
   let confirm=false
+  console.log(file);
+  const fileName=Date.now() + file?.name;
   const currentMessage={
     conversationId:currentConversation._id,
     senderId:User._id,
     messages:senderMessage.current.value,
+    media:fileName,
     isRead:openedConv?.condition ? currentConversation?.members.includes(openedConv?.senderId):currentConversation?.members.includes(openedConv?.senderId)&&openedConv?.condition===false&&confirm
   }
   console.log(User._id);
@@ -257,13 +266,7 @@ const handleSubmit=async(e)=>{
   setReceiverId(receiverId);
   
   //send message to socket Server
-  if(onlineFriends.some((member)=>member.newUserId===receiverId)){
-   currentMessage.messages&&socket?.current.emit("sendMessage",{
-    senderId:User._id,
-    receiverId:receiverId,
-    textmessage:senderMessage.current.value
-  });
-}
+  
   // socket.current.emit("sendOwnMessage",{
   //   senderId:User._id,
   //   receiverId:receiverId,
@@ -271,7 +274,30 @@ const handleSubmit=async(e)=>{
   // });
   senderMessage.current.value="";
   //save the message in the dataBase
-  if(currentMessage.messages){
+  if(currentMessage.messages || currentMessage.media){
+    if (file) {
+      const data=new FormData()
+      data.append("file",file)
+      data.append("name",fileName)
+      console.log(data);
+      try {
+       const res=await axios.post(`/api/upload?name=${fileName}`,data) 
+       if(res.status===200){
+        setFile(null)
+        if(onlineFriends.some((member)=>member.newUserId===receiverId)){
+          currentMessage.messages&&socket?.current.emit("sendMessage",{
+           senderId:User._id,
+           receiverId:receiverId,
+           media:fileName,
+           textmessage:senderMessage.current.value
+         });
+       }
+       }
+      } catch (error) {
+          console.log(error);
+      }
+  }
+
   try {
     const res=await axios.post("/api/message",currentMessage);
     setMessages([...messages,res.data])
@@ -279,12 +305,84 @@ const handleSubmit=async(e)=>{
     if(res.status===201){
     setConversations(filteredConv)
     setConversations(prev=>[conv,...prev])
+    const formWrapper=document.querySelector(".messageInputWrapper")
+    const messageWrapper=document.querySelector(".messageContainer")
+     setShowFile(false)
+    formWrapper.style.flex="1.3"
+    messageWrapper.style.flex="9.7"
   }
   } catch (error) {
     console.log(error);
   }}
 }
 
+
+
+const handleShowFile=()=>{
+  const formWrapper=document.querySelector(".messageInputWrapper")
+  const messageWrapper=document.querySelector(".messageContainer")
+  setShowFile(false)
+  formWrapper.style.flex="1.3"
+  messageWrapper.style.flex="9.7"
+  senderMessage.current.value="";
+  setIsImage(false)
+}
+
+const handleFile=(e)=>{
+  let files=e.target.files[0]
+  // setFile(prev=>e.target.files[0])
+  const formWrapper=document.querySelector(".messageInputWrapper")
+  const messageWrapper=document.querySelector(".messageContainer")
+  const imgViewer=document.querySelector(".viewFileDiv")
+  // imgViewer.removeChild()
+  senderMessage.current.value=files?.name;
+  
+  
+  setShowFile(true)
+  if (files) {
+    formWrapper.style.flex="3"
+    messageWrapper.style.flex="8"
+    console.log(files); 
+    setFile(files)
+    
+    const url=URL.createObjectURL(files)
+    setImgSrc(url)
+    console.log(files.type);
+    if(files?.type==="image/jpeg"||files?.type==="image/png"||file?.type==="image/jpg"){
+      setIsImage(true)
+    }else{
+      setIsImage(false)
+    }
+
+    // imgViewer.appendChild(Image)
+  }
+}
+
+const handleConversation=()=>{
+const conversation=document.querySelector(".createConversationPage")
+conversation.style.display="flex"
+}
+const handleCancel=()=>{
+  const conversation=document.querySelector(".createConversationPage")
+  conversation.style.display="none"
+}
+const handleCreateConv=async(e)=>{
+  e.preventDefault()
+  if(phoneNumber.current.value){
+    try {
+      const res=await axios.post(`/api/conversations/`,{phonenumber:phoneNumber.current.value,senderId:User._id},{headers:{token:"Bearer "+User.accessToken}});
+      if(res.status===200){
+        const conversation=document.querySelector(".createConversationPage")
+        setConversations(prev=>[res.data,...prev])
+        setCurrentCoversation(res.data)
+        phoneNumber.current.value=""
+        conversation.style.display="none"
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
 
   return (
     <div>
@@ -296,8 +394,20 @@ const handleSubmit=async(e)=>{
       
       <div className='chatcontainer'>
         {/* sidePlace rendering */}
+        
      <div className="conversationContainer">   
       <Topbar/>
+      <main className='createConversationPage' style={{display:"none"}}>
+          <form onSubmit={handleCreateConv}>
+            <h2>Create Conversation</h2>
+            <div className="createConvInput">
+            <label htmlFor="">Enter Number</label>
+            <input type="number" ref={phoneNumber} name="" id="" placeholder='Enter Number...'/>
+            </div>
+            <span onClick={handleCancel}><Close className='RightIcons'/></span>
+             <button type="submit">create</button>
+          </form>
+        </main>
     <div className="chatpagecontainer">
     <div className="chatpagelist">
       <div className="conversationWrapper">
@@ -308,6 +418,7 @@ const handleSubmit=async(e)=>{
        </div>
        )
        }
+       {/* <button className='createConversationBtn'><Chat className="createConversationIcon"/></button> */}
        </div>
     </div>
     <div className="chatpageFooter">
@@ -320,7 +431,9 @@ const handleSubmit=async(e)=>{
      </p>
    
     </div>
+    
     </div>
+    <button className='createConversationBtn' title='Create conversation' onClick={handleConversation}><InsertComment className='createConversationIcon'/></button>
     </div>
     {currentConversation?
    
@@ -363,13 +476,26 @@ const handleSubmit=async(e)=>{
            }
            </div>
             </div>
-            <div className="messageinputContainer">
+            <form className='messageInputWrapper' onSubmit={handleSubmit}>
+              <div className='viewFileDiv'style={showFile?{display:"flex"}:{display:"none"}}>
+                <div className="FileInfo">
+                {isImage?
+                  <img src={imgSrc&&imgSrc} alt="" width="100px" height="100px" style={{objectFit:"cover"}}/>
+                :
+                  <div className='otherTypeOfFile'>
+                    {file?.name}
+                  </div>
+                }
+                <span onClick={handleShowFile}><Cancel className='messageinputIcon'/></span>
+                </div>
+              </div>
+             <div className="messageinputContainer">
              <div className="inputContainer">
                <div className="emojisContainer">
                 <span title="emojies"><EmojiEmotionsOutlined className="messageinputIcon"/></span>
                 <label htmlFor="sendFile"> 
                  <span title="shareFile"><AttachFileOutlined className="messageinputIcon" style={{transform:"rotate(214deg)"}}/></span> 
-                 <input style={{display:"none"}} type="file" name="" id="sendFile" />
+                 <input style={{display:"none"}} type="file"  name="" id="sendFile" onChange={handleFile} accept='image/*'/>
                  </label> 
               </div>
                <input type="text" cols="50" rows="5" name='' placeholder='Type a message' className="textarea" ref={senderMessage} />
@@ -379,11 +505,12 @@ const handleSubmit=async(e)=>{
                </div>
              </div>
              <div className="sendbuttonCntainer">
-               <button onClick={handleSubmit} className="submit" title="send">
+               <button type='submit' className="submit" title="send">
                  <SendOutlined className="messageinputIcon"/>
                </button>
              </div>
             </div>
+            </form>
           </div>
     
     // else statement after there is no current conversation
