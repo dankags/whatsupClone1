@@ -11,7 +11,7 @@ import Message from '../../components/message/Message';
 import { Context, ThemeContext} from '../../contextAPI/context';
 import { Layout } from '../../components/layout/Layout';
 import Topbar from '../../components/topbar/Topbar';
-
+import "unicode-emoji"
 
 export default function Chat(user) {
   const socket=useRef(); 
@@ -100,17 +100,7 @@ useEffect(()=>{
 },[currentConversation,onlineFriends])
 
 //fetch conversations
-useMemo(()=>{
-  // const fetchFriendsConv=async()=>{
-  //   try {
-  //     const res= await axios.get("/api/conversations/"+User._id);
-  //     setConversations(res.data)
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  // fetchFriendsConv(User);
-},[User._id])
+
 
 //fetch messages from a database and notify the convesation users that you opened this conversation
 //thats if the user is in online in order to register that messages are read by using blue tick
@@ -201,7 +191,7 @@ useEffect(()=>{
   },[currentConversation])
 
   useEffect(()=>{
-    changedProfileId&&setUserFriend(prev=>({...prev,profilePic:changedProfileId.userImage}))
+    currentConversation?.members.includes(changedProfileId)&&setUserFriend(prev=>({...prev,profilePic:changedProfileId.userImage}))
   },[changedProfileId])
 
 //update messages or adds incomming message from socket to the conversation message array=>(messages,set message)
@@ -488,6 +478,7 @@ const handleCreateConv=async(e)=>{
                 }
                 <span onClick={handleShowFile}><Cancel className='messageinputIcon'/></span>
                 </div>
+                
               </div>
              <div className="messageinputContainer">
              <div className="inputContainer">

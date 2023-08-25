@@ -4,12 +4,13 @@ const bcrypt=require("bcrypt");
 const CryptoJS=require("crypto-js")
 const jwt =require("jsonwebtoken");
 const verify = require("../verifyToken");
-
+const {v4:uuidv4}=require("uuid")
 //register
 router.post("/register",async(req,res)=>{
-
+  
   try {
     const newUser=new User({
+      _id:uuidv4(),
       username:req.body.username,
       email:req.body.email,
       password:CryptoJS.AES.encrypt(req.body.password,process.env.SECRET_KEY).toString(),
@@ -19,7 +20,7 @@ router.post("/register",async(req,res)=>{
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json(err);
-  }
+ }
 });
 //login 
 router.post("/login",async(req,res)=>{

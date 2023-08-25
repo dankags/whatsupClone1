@@ -2,6 +2,7 @@ const router=require("express").Router();
 const Conversation = require('../models/conversation');
 const User=require("../models/user");
 const verify = require("../verifyToken");
+const {v4:uuidv4}=require("uuid")
 
 // create new friends conversation 
 router.post("/",verify,async(req,res)=>{
@@ -15,6 +16,7 @@ router.post("/",verify,async(req,res)=>{
   let checkConversationExist=await conversations.some(item=>item.members.includes(user._id))
   if (checkConversationExist===false) {
   const newConversation=new Conversation({
+    _id:uuidv4(),
     members:[ req.body.senderId,
      user._id
     ]

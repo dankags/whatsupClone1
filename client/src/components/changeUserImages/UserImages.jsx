@@ -98,8 +98,8 @@ export const UserImages = ({changeSettings}) => {
             {changeSettings?
             <>
             <img src={changeSettings&&imgSrc?imgSrc:`${process.env.REACT_APP_PUBLIC_FOLDER}${user.backImg}`} alt="" class="backImg"/>
-            <div class="profileWrapper">
-                <img src="/assets/noAvatar2.webp" alt="" class="profileImg"/>
+            <div class="profileWrapper" style={{borderColor:"var(--main)"}}>
+                <img src={user.profilePic?`${process.env.REACT_APP_PUBLIC_FOLDER}${user.profilePic}`:"/assets/noAvatar2.webp"} alt="" class="profileImg"/>
             </div>
             </>
             :

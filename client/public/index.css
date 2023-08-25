@@ -17,6 +17,8 @@
    --callBtnColor:rgb(209, 209, 209);
    --callIconColor:rgb(12, 156, 60);
    --createConversationColor:white;
+   --profile_boxShadow1:#ffffff;
+   --profile_boxShadow2: #aaaaaa;
 }
 #root[data-theme="dark"]{
    --originalTextColor:grey;
@@ -33,6 +35,8 @@
    --callBtnColor:#b9b9b9;
    --callIconColor:#2a7544;
    --createConversationColor:#242424;
+   --profile_boxShadow1:#222222;
+   --profile_boxShadow2:#0a0a0a;
 }
 body{
    background-color: var(--main);

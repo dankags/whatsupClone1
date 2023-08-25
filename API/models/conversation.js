@@ -1,6 +1,10 @@
 const mongoose=require("mongoose") ;
 
 const conversationSchema=new mongoose.Schema({
+    _id:{
+        type:String,
+        default:""
+    },
     members:{
         type:Array,
     },

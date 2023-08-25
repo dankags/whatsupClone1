@@ -72,6 +72,9 @@
     left: 0;
     right: 0;
     margin: auto;
+    border: none;
+    box-shadow:  8px 8px 16px var(--profile_boxShadow2),
+    -8px -8px 16px var(--profile_boxShadow1);
 }
 .profileImg{
     width: 100%;
